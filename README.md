@@ -17,6 +17,11 @@ add the following commands inside the config.fish
 
 > ~/.fzf/install
 
+4. install oh-my-fish
+> curl -L https://get.oh-my.fish > install
+
+> fish install --path=~/.local/share/omf --config=~/.config/omf
+
 
 Here is the config file for fish.
 1. abbr_fish.sh includes all the abbreviations used in fish.
