@@ -8,3 +8,6 @@ abbr -a -U -- img '~/libsixel/converters/img2sixel'
 abbr -a -U -- rg ranger
 abbr -a -U -- vf 'vifm $PWD'
 abbr -a -U -- vi vim
+abbr -a -U -- ff 'ffmpeg -i'
+abbr -a -U -- chm 'chmod +x *.R'
+
