@@ -1,6 +1,14 @@
 # fishconfig
 
 ## Install fish in ubuntu
+
+For simplicity, you simply need to download the config_fish_all.sh 
+and run the following comand:
+> chmd +x config_fish_all.sh 
+
+> source config_fish_all.sh 
+
+
 > sudo apt-get install fish
 
 2. create config file
