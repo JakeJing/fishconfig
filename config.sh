@@ -25,7 +25,12 @@ sudo apt-get install vifm
 
 wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vifm -P ~/.config/vifm/colors/
 
+# download vifmrc
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P ~/.config/vifm/
+
+#download functions
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/chd.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/mkd.fish -P ~/.config/fish/functions/
 
 sed -i "" 's/colorscheme\ Default/colorscheme\ solarized-dark/g' ~/.config/vifm/vifmrc
 
