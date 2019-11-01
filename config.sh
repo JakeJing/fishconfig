@@ -21,7 +21,6 @@ sudo apt-get install vifm
 
 wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vifm -P ~/.config/vifm/colors/
 
-sed -i 's/colorscheme Default/colorscheme solorized-dark/g' ~/.config/vifm/vifmrc
-
+sed -i "" 's/colorscheme\ Default/colorscheme\ solorized-dark/g' ~/.config/vifm/vifmrc
 
 
