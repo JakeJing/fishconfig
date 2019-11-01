@@ -32,6 +32,14 @@ wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/chd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/mkd.fish -P ~/.config/fish/functions/
 
-sed -i "" 's/colorscheme\ Default/colorscheme\ solarized-dark/g' ~/.config/vifm/vifmrc
+# download abbr and alias
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/abbr_fish.fish -P ~/.config/fish/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/aliases.fish -P ~/.config/fish/
+
+
+echo ". ~/.config/fish/aliases.fish" >> ~/.config/fish/config.fish
+echo ". ~/.config/fish/abbr_fish.fish" >> ~/.config/fish/config.fish
+
+# sed -i "" 's/colorscheme\ Default/colorscheme\ solarized-dark/g' ~/.config/vifm/vifmrc
 
 
