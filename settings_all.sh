@@ -31,6 +31,8 @@ wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P
 #download functions
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/chd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/mkd.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/fish_prompt.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/fish_user_key_bindings.fish -P ~/.config/fish/functions/
 
 # download abbr and alias
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/abbr_fish.fish -P ~/.config/fish/
