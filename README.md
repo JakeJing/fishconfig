@@ -4,6 +4,8 @@
 
 For simplicity, you simply need to download the config_fish_all.sh 
 and run the following comand:
+> wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/config_fish_all.sh
+
 > chmd +x config_fish_all.sh 
 
 > source config_fish_all.sh 
