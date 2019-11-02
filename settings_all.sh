@@ -1,5 +1,8 @@
 #! /usr/bin/bash
 
+# update apt-get
+sudo apt-get update
+
 # install Linuxbrew
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 
@@ -17,14 +20,8 @@ echo "set fish_greeting ''" > ~/.config/fish/config.fish
 brew install fzf
 $(brew --prefix)/opt/fzf/install
 
-# update apt-get
-sudo apt-get update
-
 # install vifm
 sudo apt-get install vifm
-
-# install bobthefish via omf
-omf install bobthefish
 
 # download colorscheme
 wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vifm -P ~/.config/vifm/colors/
