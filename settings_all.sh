@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
-#install Linuxbrew
+# install Linuxbrew
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 
 echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.profile
@@ -20,6 +20,9 @@ $(brew --prefix)/opt/fzf/install
 # install omf
 curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/bin/install > install
 
+# update apt-get
+sudo apt-get update
+
 # install vifm
 sudo apt-get install vifm
 
@@ -32,7 +35,7 @@ wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vi
 # download vifmrc
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P ~/.config/vifm/
 
-#download functions
+# download functions
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/chd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/mkd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/functions/fish_prompt.fish -P ~/.config/fish/functions/
@@ -49,7 +52,6 @@ echo ". ~/.config/fish/abbr_fish.fish" >> ~/.config/fish/config.fish
 # create softlinks
 ln -s ~/.local/share/omf/themes/bobthefish/fish_prompt.fish ~/.config/fish/functions/
 ln -s ~/.fzf/shell/key-bindings.fish ~/.config/fish/functions/
-
 
 # sed -i "" 's/colorscheme\ Default/colorscheme\ solarized-dark/g' ~/.config/vifm/vifmrc
 
