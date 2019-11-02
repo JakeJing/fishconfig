@@ -53,6 +53,8 @@ echo ". ~/.config/fish/abbr_fish.fish" >> ~/.config/fish/config.fish
 ln -s ~/.local/share/omf/themes/bobthefish/fish_prompt.fish ~/.config/fish/functions/
 ln -s ~/.fzf/shell/key-bindings.fish ~/.config/fish/functions/
 
+# change the prompt setting
+
 # sed -i "" 's/colorscheme\ Default/colorscheme\ solarized-dark/g' ~/.config/vifm/vifmrc
 
 
