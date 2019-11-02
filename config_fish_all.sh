@@ -23,6 +23,10 @@ curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/bin/install > instal
 # install vifm
 sudo apt-get install vifm
 
+# install bobthefish via omf
+omf install bobthefish
+
+# download colorscheme
 wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vifm -P ~/.config/vifm/colors/
 
 # download vifmrc
