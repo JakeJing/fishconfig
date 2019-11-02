@@ -33,7 +33,6 @@ wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/chd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/mkd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/gu.fish -P ~/.config/fish/functions/
-wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/fish_user_key_bindings.fish -P ~/.config/fish/functions/
 
 # download abbr and alias
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/abbr_fish.fish -P ~/.config/fish/
