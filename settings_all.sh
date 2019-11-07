@@ -28,6 +28,7 @@ wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vi
 
 # download vifmrc
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P ~/.config/vifm/
+mkdir ~/.config/vifm/Trash
 
 # download functions
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/chd.fish -P ~/.config/fish/functions/
