@@ -1,5 +1,7 @@
 . ~/.config/fish/aliases.fish
 . ~/.config/fish/abbr_fish.fish
+set -x LC_ALL en_US.UTF-8
+
 
 set -g -x PATH /usr/local/bin /opt/local/bin $PATH
 set -gx LDFLAGS "-L/opt/local/lib -L/usr/local/opt/openssl/lib"
