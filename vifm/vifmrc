@@ -136,6 +136,7 @@ command! run !! ./%f
 command! make !!make %a
 command! mkcd :mkdir %a | cd %a
 command! reload :write | restart
+command! v !! vp %f
 
 " ------------------------------------------------------------------------------
 
@@ -268,7 +269,7 @@ filetype *.pkg open
 
 " Office files
 filetype *.odt,*.doc,*.docx,*.xls,*.xlsx,*.odp,*.pptx,*.ppt open -a LibreOffice.app
-fileviewer *.doc antiword -
+fileviewer *.doc catdoc -
 fileviewer *.docx docx2txt.pl %f -
 
 " Syntax highlighting in preview
@@ -317,6 +318,8 @@ nmap bb :marks <cr>
 mark h ~
 mark d ~/Documents/
 mark D ~/Downloads/
+mark g /Users/jakejing/Google\ Drive/Interplay_of_length_harmony_direction/
+
 
 
 " ------------------------------------------------------------------------------
@@ -334,6 +337,9 @@ mark D ~/Downloads/
 " ------------------------------------------------------------------------------
 
 " Sample mappings
+
+" Map the key to view pdf with termpdf
+nnoremap tp :!vp %f<cr>
 
 " Start shell in current directory
 nnoremap s :shell<cr>
