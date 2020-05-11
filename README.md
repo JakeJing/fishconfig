@@ -9,6 +9,9 @@ Mac Users:
 > wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/settings_all_mac.sh
 
 Switch to zsh or bash terminal, and do not use fish. Otherwise, it may have some problem to install homebrew.
+
+> bash
+
 > chmd +x settings_all_mac.sh
 
 > source settings_all_mac.sh
