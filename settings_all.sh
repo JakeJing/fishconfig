@@ -31,9 +31,19 @@ wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P
 mkdir ~/.config/vifm/Trash
 
 # download functions
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/autocomp.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/autoweave.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/chd.fish -P ~/.config/fish/functions/
-wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/mkd.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/compile.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/fd.fish -P ~/.config/fish/functions/
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/gu.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/ina.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/mkd.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/new.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/op.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/rd.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/trash.fish -P ~/.config/fish/functions/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/functions/vp.fish -P ~/.config/fish/functions/
 
 # download abbr and alias
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/fish/abbr_fish.fish -P ~/.config/fish/

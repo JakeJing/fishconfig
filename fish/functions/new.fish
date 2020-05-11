@@ -8,6 +8,12 @@ function new --description 'Create a new R or markdown template file'
     cp ~/git/knitr-markdown-engines/templates/Knitr-template.R $argv
   case '*.r'
     cp ~/git/knitr-markdown-engines/templates/Knitr-template.R $argv
+  case '*.pmd'
+    cp /Users/jakejing/git/python-notebook-atom/template/template.pmd $argv
+  case '*.Pmd'
+    cp /Users/jakejing/git/python-notebook-atom/template/template.pmd $argv
+  case '*.py'
+    cp /Users/jakejing/git/python-notebook-atom/template/template.py $argv
   case '*'
     echo 'filename is not correct!'
   end
