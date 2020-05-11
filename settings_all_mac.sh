@@ -21,7 +21,7 @@ $(brew --prefix)/opt/fzf/install
 brew install vifm
 
 # download colorscheme
-wget https://raw.githubusercontent.com/vifm/vifm-colors/master/solarized-dark.vifm -P ~/.config/vifm/colors/
+wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/solarized-dark.vifm -P ~/.config/vifm/colors/
 
 # download vifmrc
 wget https://raw.githubusercontent.com/JakeJing/fishconfig/master/vifm/vifmrc -P ~/.config/vifm/
