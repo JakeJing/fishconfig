@@ -4,7 +4,7 @@
 sudo apt-get update
 
 # install Linuxbrew
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>~/.profile
 eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
