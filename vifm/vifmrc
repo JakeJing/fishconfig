@@ -186,37 +186,34 @@ filetype *.md open -a typora %f
 filetype *.Rmd open -a RStudio %f
 
 
-"pdf Note: > /dev/null is used to avoid print out stdout info
-filetype *.pdf open -a Preview %f &
-fileviewer *.pdf
-        \ tput cup %py %px > /dev/tty && sips -s format jpeg %c --out /tmp/tempfile.jpg > /dev/null&& kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
-		\ %pc
-		\ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
-
-" pdftoppm -jpeg -f 1 -singlefile %c /tmp/tempfile
-
 " Pictures
 filetype *.bmp,*.jpg,*.jpeg,*.png,*.xpm open -a Preview %f &
 fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.xpm
-		   \ kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py %c
-		   \ %pc
-		   \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
+    \ kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py %c
+    \ %pc
+    \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
+
+" Pdf
+filetype *.pdf open -a Preview %f &
+fileviewer *.pdf
+    \ tput cup %py %px > /dev/tty && sips -s format jpeg %c --out /tmp/tempfile.jpg > /dev/null&& kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
+    \ %pc
+    \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
 
 " Video
 filetype *.gif,*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
-        \*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,
-        \*.as[fx]
-       \ {Open in IINA}
-       \ open -a IINA.app,
-       \ {Open in QuickTime Player}
-       \ open -a QuickTime\ Player.app,
-       \ {Open in MPlayerX}
-       \ open -a MPlayerX.app,
+    \*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,
+    \*.as[fx]
+    \ {Open in IINA}
+	\ open -a IINA.app,
+    \ {Open in QuickTime Player}
+    \ open -a QuickTime\ Player.app,
+    \ {Open in MPlayerX}
+    \ open -a MPlayerX.app,
 fileviewer *.gif,*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,*.as[fx]
-		   \ tput cup %py %px > /dev/tty && ffmpeg -y -hide_banner -loglevel panic -i %c -ss 00:00:01.000 -vframes 1 /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
-		  \ %pc
-		  \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
-" alternative setting to fix the frame time: -ss 00:00:03.000 -vframes 1
+	\ tput cup %py %px > /dev/tty && ffmpeg -y -hide_banner -loglevel panic -i %c -ss 00:00:01.000 -vframes 1 /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
+	\ %pc
+	\ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
 
 " Web
 filetype *.html,*.htm
