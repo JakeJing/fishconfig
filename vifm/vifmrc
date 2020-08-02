@@ -138,6 +138,7 @@ command! mkcd :mkdir %a | cd %a
 command! reload :write | restart
 command! v !! vp %f
 command! p !! pvd %f
+command! o open $PWD
 
 " ------------------------------------------------------------------------------
 
@@ -168,30 +169,41 @@ command! p !! pvd %f
 " You can also add %CLEAR if you want to clear screen before running FUSE
 " program.
 
-"pdf Note: > /dev/null is used to avoid print out stdout info
-filetype *.pdf open -a Preview %f &
-fileviewer *.pdf
-        \ tput cup %py %px > /dev/tty && sips -s format jpeg %c --out /tmp/tempfile.jpg > /dev/null&& kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
-		\ %pc
-		\ kitty +kitten icat --transfer-mode=file --clear
 
-" pdftoppm -jpeg -f 1 -singlefile %c /tmp/tempfile
-
-filextype *.ps,*.eps,*.ps.gz
+filetype *.ps,*.eps,*.ps.gz
         \ {View in zathura}
         \ zathura %f,
         \ {View in gv}
         \ gv %c %i &,
 
+" .vim session file
+filetype *.vim vim -S %f
+
+" .md file open with typora
+filetype *.md open -a typora %f
+
+" .Rmd file open with Rstudio
+filetype *.Rmd open -a RStudio %f
+
+
+"pdf Note: > /dev/null is used to avoid print out stdout info
+filetype *.pdf open -a Preview %f &
+fileviewer *.pdf
+        \ tput cup %py %px > /dev/tty && sips -s format jpeg %c --out /tmp/tempfile.jpg > /dev/null&& kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
+		\ %pc
+		\ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
+
+" pdftoppm -jpeg -f 1 -singlefile %c /tmp/tempfile
+
 " Pictures
-filetype *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm open -a Preview %f &
-fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
-		   \ kitty icat --transfer-mode=file --place=%pwx%ph@%pxx%py %c
+filetype *.bmp,*.jpg,*.jpeg,*.png,*.xpm open -a Preview %f &
+fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.xpm
+		   \ kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py %c
 		   \ %pc
-		   \ kitty icat --transfer-mode=file --clear
+		   \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
 
 " Video
-filetype *.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
+filetype *.gif,*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
         \*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,
         \*.as[fx]
        \ {Open in IINA}
@@ -200,10 +212,10 @@ filetype *.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
        \ open -a QuickTime\ Player.app,
        \ {Open in MPlayerX}
        \ open -a MPlayerX.app,
-fileviewer *.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,*.as[fx]
-		   \ tput cup %py %px > /dev/tty && ffmpeg -y -hide_banner -loglevel panic -i %c -ss 00:00:03.000 -vframes 1 /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
+fileviewer *.gif,*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,*.fl[icv],*.m2v,*.mov,*.webm,*.ts,*.mts,*.m4v,*.r[am],*.qt,*.divx,*.as[fx]
+		   \ tput cup %py %px > /dev/tty && ffmpeg -y -hide_banner -loglevel panic -i %c -ss 00:00:01.000 -vframes 1 /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
 		  \ %pc
-		  \ kitty +kitten icat --transfer-mode=file --clear
+		  \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear
 " alternative setting to fix the frame time: -ss 00:00:03.000 -vframes 1
 
 " Web
@@ -346,6 +358,8 @@ nnoremap tp :!vp %f<cr>
 
 " Start shell in current directory
 nnoremap s :shell<cr>
+" if you cannot change the default shell, you can use "nnoremap s:!fish<cr>"
+
 
 " Display sorting dialog
 nnoremap S :sort<cr>
