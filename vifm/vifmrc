@@ -1,5 +1,3 @@
-" vim: filetype=vifm :
-" Sample configuration file for vifm on OSX (last updated: 2 June, 2019)
 " You can edit this file by hand.
 " The " character at the beginning of a line comments out the line.
 " Blank lines are ignored.
@@ -183,10 +181,16 @@ filetype *.vim vim -S %f
 filetype *.md open -a typora %f
 
 " .Rmd file open with Rstudio
-filetype *.Rmd open -a RStudio %f
+filetype *.Rmd code %f
 
 " .pmd and .jmd file open with Atom
-filetype *.pmd *.jmd open -a Atom %f
+filetype *.pmd,*.jmd open -a Atom %f
+
+" .js file open with typora
+filetype *.js,*.css code %f
+
+" .csv file open with scim
+filetype *.csv scim %f
 
 
 " Pictures
@@ -198,7 +202,8 @@ fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.xpm
 
 " Pdf
 " Note: > /dev/null is used to avoid print out stdout info
-filetype *.pdf open -a Preview %f &
+" filetype *.pdf open -a Preview %f &
+filetype *.pdf open -a Skim %f &
 fileviewer *.pdf
         \ tput cup %py %px > /dev/tty && sips -s format jpeg %c --out /tmp/tempfile.jpg > /dev/null&& kitty +kitten icat --clear --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg
 		\ %pc
@@ -339,7 +344,7 @@ nmap bb :marks <cr>
 mark h ~
 mark d ~/Documents/
 mark D ~/Downloads/
-mark g /Users/jakejing/Google\ Drive/Interplay_of_length_harmony_direction/
+mark g /Users/jakejing/GoogleDrive/Interplay_of_length_harmony_direction/
 mark t /Users/jakejing/.config/vifm/Trash/
 
 " ------------------------------------------------------------------------------

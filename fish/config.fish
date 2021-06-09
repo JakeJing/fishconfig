@@ -1,12 +1,12 @@
 . ~/.config/fish/aliases.fish
-. ~/.config/fish/abbr_fish.fish
+. ~/.config/fish/abbr_fish.sh
 set -x LC_ALL en_US.UTF-8
 
+set -g -x PATH /usr/local/bin /usr/local/lib /opt/local/bin /Applications/Julia-1.5.app/Contents/Resources/julia/bin/ /Users/jakejing/.config/vifm/scripts/ /usr/local/share/ /usr/local/share/fish/completions/ /Users/jakejing/.script/ /Users/jakejing/.rvm/bin /usr/local/bin/jupyter-nbextension /usr/local/lib/python3.9/site-packages /Users/jakejing/.nvm /Users/jakejing/switchdrive/uralic/TuLeD /Applications/BEAST\ 3.5.1/bin /usr/local/opt/openssl@1.1/bin /Library/PostgreSQL/13/bin /Applications/Skim.app/Contents/MacOS /Applications/Skim.app/Contents/SharedSupport $PATH
 
-set -g -x PATH /usr/local/bin /opt/local/bin $PATH
-set -gx LDFLAGS "-L/opt/local/lib -L/usr/local/opt/openssl/lib"
+set -gx LDFLAGS "-L/opt/local/lib -L/usr/local/opt/openssl/lib -L/usr/local/opt/python@3.9/lib"
 set -gx CPPFLAGS "-I/usr/local/opt/openssl/include"
-set -gx PKG_CONFIG_PATH "/usr/local/opt/openssl/lib/pkgconfig"
+set -gx PKG_CONFIG_PATH "/usr/local/opt/openssl/lib/pkgconfig /usr/local/opt/python@3.9/lib/pkgconfig"
 
 # set the default keybinding
 set -U fish_key_bindings fish_default_key_bindings
@@ -34,10 +34,16 @@ set fish_plugins autojump vi-mode tacklebox_plugins python extract
 # Load Tacklebox configuration
 . ~/.tacklebox/tacklebox.fish
 
-set -g fish_user_paths "/usr/local/opt/openssl/bin" $fish_user_paths
+# set -g fish_user_paths "/usr/local/opt/openssl/bin" $fish_user_paths
 
 test -e {$HOME}/.iterm2_shell_integration.fish ; and source {$HOME}/.iterm2_shell_integration.fish
 
 
+
+# set -g fish_user_paths "/usr/local/opt/qt/bin" $fish_user_paths
+
+# kitty + complete setup fish | source
+
+status is-login; and pyenv init --path | source
 
 

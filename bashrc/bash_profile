@@ -1,0 +1,59 @@
+# PS1="$PWD > "
+
+# add another comment
+
+export LC_ALL=en_US.UTF-8
+
+# added by Anaconda2 4.0.0 installer
+alias ls='ls --color'
+alias gcc='gcc-7'
+alias beast='sh /Applications/BEAST\ 2.5.1/bin/beast'
+alias densitree='sh /Applications/BEAST\ 2.5.1/bin/densitree'
+alias beauti='sh /Applications/BEAST\ 2.5.1/bin/beauti'
+alias treeannotator='sh /Applications/BEAST\ 2.5.1/bin/treeannotator'
+alias rm='trash'
+alias julia='/Applications/Julia-1.5.app/Contents/Resources/julia/bin/julia'
+
+CC=gcc
+#LS_COLORS='di=1:fi=0:ln=31:pi=5:so=5:bd=5:cd=5:or=31:mi=0:ex=35:*.rpm=90'
+#export LS_COLORS
+
+# LIBS += -framework IOKit
+
+# LDFLAGS = -L/opt/X11/lib -lX11 -lpthread
+
+#python
+#export PYTHON_HOME=/Users/jakejing/anaconda/bin
+#export PYTHONPATH=/Library/Python/2.7/site-packages:/Users/jakejing/udpipe/src/udpipe:/#usr/local/lib/python2.7/site-packages
+
+#java
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home
+export JRE_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_66.jdk/Contents/Home
+
+export PATH=$PATH:/usr/bin:/usr/local/bin:/Users/jakejing/udpipe/src/udpipe:Users/jakejing/fossil/fossil:JAVA_HOME/bin:/usr/local/bin/parallel:/Users/jakejing/RevBayes:/Users/jakejing/Documents/Circos/circos-0.69-6/bin:/Users/jakejing/git/revbayes-master/projects/cmake:/Users/jakejing/libsixel/converters:/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers/X11:/Applications/Julia-1.5.app/Contents/Resources/julia/bin/:/Users/jakejing/.nvm:/Users/jakejing/switchdrive/uralic/TuLeD:/usr/local/bin/python3:/usr/local/opt/python@3.9/bin:/usr/local/opt/python@3.9/bin/python3
+
+export CLASSPATH=$CLASSPATH:/Users/jakejing/Documents/javawd/Stanford\ CoreNLP/bin:/Users/jakejing/Documents/javawd/stanford-corenlp-full-2015-12-09:/Users/jakejing/Documents/pythonwd/stanford_corenlp_pywrapper/stanford_corenlp_pywrapper:/usr/local/lib/python3.9/site-packages:/Users/jakejing/.nvm:/Users/jakejing/switchdrive/uralic/TuLeD
+
+export LIBS="-L/Users/jakejing/Documents/pythonwd/word_alignment/PA3/boost_1_52_0/stage/lib"
+export CPPFLAGS="-I/Users/jakejing/Documents/pythonwd/word_alignment/PA3/boost_1_52_0 "
+export LIBS="-L/opt/local/lib"
+export LD_LIBRARY_PATH="/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rgdal/R"
+
+
+# path for calibre
+export CALIBRE="/Applications/calibre.app/Contents/console.app/Contents/MacOS"
+export PATH="$CALIBRE:$PATH"
+
+export DYLD_LIBRARY_PATH=/Users/jakejing/git/revbayes-master/boost_1_60_0/stage/lib$DYLD_LIBRARY_PATH
+
+ #set -o vi
+export LDFLAGS="-L/opt/local/lib"
+
+# if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+export PATH="/usr/local/opt/ruby/bin:$PATH"
+
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+eval "$(pyenv init -)"
+
