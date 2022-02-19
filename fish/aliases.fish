@@ -1,6 +1,9 @@
 # list files
-alias lsf "clear ; and ls -v --group-directories-first"
+# alias lsf "clear ; and ls -v --group-directories-first"
+# alias lsd "clear ; and ls -d */"
+alias lsf "clear ; and exa"
 alias lsd "clear ; and ls -d */"
+alias lsa "clear ; and exa -l"
 
 # check the function descriptions
 alias fns "functions"
@@ -34,10 +37,10 @@ alias gk 'pushd ~/.config/kitty/ ; and lsf'
 alias gm 'pushd ~/switchdrive/stochastic-process/ ; and lsf'
 alias gc 'pushd ~/switchdrive/cpluswd/ ; and lsf'
 alias gj '/Users/jakejing/switchdrive/juliawd ; and lsf'
-alias gu '/Users/jakejing/git/uralic/uralic_webapp/uralic ; and lsf'
+alias gU '/Users/jakejing/git/uralic/uralic_webapp/uralic ; and lsf'
 
 # alias for python
-alias python3 'python3.9'
+#alias python3 'python3.9'
 
 # alis for R
 alias r radian
@@ -56,3 +59,7 @@ alias kt 'kitty +kitten '
 
 # pdf combine
 alias pdfcombine '/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Resources/join.py'
+
+# java apps
+alias densitree 'java -jar /Users/jakejing/switchdrive/phylogenetic-tools/apps/DensiTree.v2.2.5.jar'
+alias figtree 'java -jar /Applications/FigTree\ v1.4.4.app/Contents/Resources/Java/figtree.jar'
