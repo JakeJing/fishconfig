@@ -268,7 +268,7 @@ class Document(fitz.Document):
         self.filename = filename
         self.citekey = None
         self.papersize = 3
-        self.layout(rect=fitz.PaperRect('A6'),fontsize=fontsize)
+        self.layout(rect=fitz.paper_rect('A6'),fontsize=fontsize)
         self.page = 0
         self.logicalpage = 1
         self.prevpage = 0
@@ -330,7 +330,7 @@ class Document(fitz.Document):
         self.goto_page(self.page - count)
 
     def goto_chap(self, n):
-        toc = self.getToC()
+        toc = self.get_toc()
         if n > len(toc):
             n = len(toc)
         elif n < 0:
@@ -342,7 +342,7 @@ class Document(fitz.Document):
             self.goto_page(0)
 
     def current_chap(self):
-        toc = self.getToC()
+        toc = self.get_toc()
         p = self.page
         for i,ch in enumerate(toc):
            cp = ch[2] - 1
@@ -478,7 +478,7 @@ class Document(fitz.Document):
         # until we find a match
         for i in [0,1,-1,2,-2,3,-3,4,-4,5,-5,6,-6]:
             f = target + i
-            match_text = self[f].getText().split()
+            match_text = self[f].get_text().split()
             match_text = ' '.join(match_text)
             if target_text in match_text:
                 return f
@@ -487,7 +487,7 @@ class Document(fitz.Document):
 
     def set_layout(self,papersize, adjustpage=True):
         # save a snippet of text from current page
-        target_text = self[self.page].getText().split()
+        target_text = self[self.page].get_text().split()
         if len(target_text) > 6:
             target_text = ' '.join(target_text[:6])
         elif len(target_text) > 0:
@@ -502,7 +502,7 @@ class Document(fitz.Document):
         elif papersize < 0:
             papersize = 0
         p = sizes[papersize]
-        self.layout(fitz.PaperRect(p))
+        self.layout(fitz.paper_rect(p))
         self.pages = self.pageCount - 1
         if adjustpage:
             target = int((self.pages + 1) * pct) - 1
@@ -548,7 +548,7 @@ class Document(fitz.Document):
     def get_text_in_Rect(self, rect):
         from operator import itemgetter
         from itertools import groupby
-        page = self.loadPage(self.page)
+        page = self.load_page(self.page)
         words = page.getTextWords()
         mywords = [w for w in words if fitz.Rect(w[:4]) in rect]
         mywords.sort(key=itemgetter(3, 0))  # sort by y1, x0 of the word rect
@@ -562,7 +562,7 @@ class Document(fitz.Document):
     def get_text_intersecting_Rect(self, rect):
         from operator import itemgetter
         from itertools import groupby
-        page = self.loadPage(self.page)
+        page = self.load_page(self.page)
         words = page.getTextWords()
         mywords = [w for w in words if fitz.Rect(w[:4]).intersects(rect)]
         mywords.sort(key=itemgetter(3, 0))  # sort by y1, x0 of the word rect
@@ -596,16 +596,16 @@ class Document(fitz.Document):
 
     def display_page(self, bar, p, display=True):
 
-        page = self.loadPage(p)
+        page = self.load_page(p)
         page_state = self.page_states[p]
 
         if self.autocrop and self.isPDF:
-            page.setCropBox(page.MediaBox)
+            page.set_cropbox(page.MediaBox)
             crop = self.auto_crop(page)
-            page.setCropBox(crop)
+            page.set_cropbox(crop)
 
         elif self.isPDF:
-            page.setCropBox(page.MediaBox)
+            page.set_cropbox(page.MediaBox)
 
         dw = scr.width
         dh = scr.height - scr.cell_height
@@ -646,8 +646,8 @@ class Document(fitz.Document):
         if page_state.stale: #or (display and not write_gr_cmd_with_response(cmd)):
             # get zoomed and rotated pixmap
             mat = fitz.Matrix(factor, factor)
-            mat = mat.preRotate(self.rotation)
-            pix = page.getPixmap(matrix = mat, alpha=self.alpha)
+            mat = mat.prerotate(self.rotation)
+            pix = page.get_pixmap(matrix = mat, alpha=self.alpha)
 
             if self.invert:
                 pix.invertIRect()
@@ -687,7 +687,7 @@ class Document(fitz.Document):
 
     def show_toc(self, bar):
 
-        toc = self.getToC()
+        toc = self.get_toc()
 
         if not toc:
             bar.message = "No ToC available"

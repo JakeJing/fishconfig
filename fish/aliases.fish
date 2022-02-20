@@ -1,9 +1,15 @@
 # list files
 # alias lsf "clear ; and ls -v --group-directories-first"
 # alias lsd "clear ; and ls -d */"
-alias lsf "clear ; and exa"
+
+# need `brew install coreutils` to get gls
+alias ls "clear ; and gls --hyperlink=auto --color=auto"
 alias lsd "clear ; and ls -d */"
-alias lsa "clear ; and exa -l"
+alias lsa "clear ; and gls -al --group-directories-first --color=auto --hyperlink=auto"
+
+# hyperlinked grep
+alias hg='kitty +kitten hyperlinked_grep'
+
 
 # check the function descriptions
 alias fns "functions"
@@ -24,20 +30,20 @@ alias ek 'vim ~/.config/kitty/kitty.conf'
 alias er 'vim ~/.Rprofile'
 
 # Quick go
-alias gd 'pushd ~/Documents/ ; and lsf'
-alias gD 'pushd ~/Downloads/ ; and lsf'
-alias gh 'pushd ~ ; and lsf'
-alias gg 'pushd ~/GoogleDrive/ ; and lsf'
-alias gi 'pushd ~/git/ ; and lsf'
-alias gs 'pushd ~/switchdrive/ ; and lsf'
-alias gp 'pushd ~/switchdrive/phylogenetic-tools/simmap-eigendecomposition/Main/ ; and lsf'
-alias gv 'pushd ~/.config/vifm/ ; and lsf'
-alias gf 'pushd ~/.config/fish/ ; and lsf'
-alias gk 'pushd ~/.config/kitty/ ; and lsf'
-alias gm 'pushd ~/switchdrive/stochastic-process/ ; and lsf'
-alias gc 'pushd ~/switchdrive/cpluswd/ ; and lsf'
-alias gj '/Users/jakejing/switchdrive/juliawd ; and lsf'
-alias gU '/Users/jakejing/git/uralic/uralic_webapp/uralic ; and lsf'
+alias gd 'pushd ~/Documents/ ; and ls'
+alias gD 'pushd ~/Downloads/ ; and ls'
+alias gh 'pushd ~ ; and ls'
+alias gg 'pushd ~/GoogleDrive/ ; and ls'
+alias gi 'pushd ~/git/ ; and ls'
+alias gs 'pushd ~/switchdrive/ ; and ls'
+alias gp 'pushd ~/switchdrive/phylogenetic-tools/simmap-eigendecomposition/Main/ ; and ls'
+alias gv 'pushd ~/.config/vifm/ ; and ls'
+alias gf 'pushd ~/.config/fish/ ; and ls'
+alias gk 'pushd ~/.config/kitty/ ; and ls'
+alias gm 'pushd ~/switchdrive/stochastic-process/ ; and ls'
+alias gc 'pushd ~/switchdrive/cpluswd/ ; and ls'
+alias gj '/Users/jakejing/switchdrive/juliawd ; and ls'
+alias gU '/Users/jakejing/git/uralic/uralic_webapp/uralic ; and ls'
 
 # alias for python
 #alias python3 'python3.9'

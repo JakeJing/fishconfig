@@ -21,3 +21,6 @@ abbr -a -- gicl 'git clone'
 # open finder in the current directory
 abbr -a -- op 'open $PWD'
 
+# synchronize google drive
+abbr -a -- synd 'sudo /Applications/Google\ Drive.app/Contents/MacOS/Google\ Drive'
+
