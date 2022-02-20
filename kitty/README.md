@@ -46,5 +46,8 @@ ctrl + shift + click # open the file in vim or kitty shell
 # search a keyword of "food" in current directory
 hg food
 ctrl + shift + click # open the file in vim or kitty shell
+
+# search "food" in a file
+hg "form of" script.Rmd 
 ```
 
