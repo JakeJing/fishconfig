@@ -17,7 +17,7 @@ function new --description 'Create a new R or markdown template file'
   case '*.Pmd'
     cp /Users/jakejing/git/python-notebook-atom/template/template.pmd $argv
   case '*.py'
-    cp /Users/jakejing/git/python-notebook-atom/template/template.py $argv
+    cp /Users/jakejing/git/vscode-python-config/template/template.py $argv
   case '*.ipynb'
     cp /Users/jakejing/git/python-notebook-atom/template/julia-template.ipynb $argv
   case '*'

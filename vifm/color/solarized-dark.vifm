@@ -1,5 +1,5 @@
 " VIFM COLORS
-" solarized dark
+" solarized dark (adjust by Yingqi Jing for better performance in neovim terminal, cmdline color changed)
 " based on: https://github.com/istib/dotfiles/blob/master/vifm/vifm-colors
 
 " Default = -1 = None, can be used for transparency or default color
@@ -33,7 +33,7 @@ highlight Selected        cterm=bold ctermfg=magenta    ctermbg=default
 highlight CurrLine        cterm=bold ctermfg=default    ctermbg=blue
 
 highlight WildMenu        cterm=underline,reverse ctermfg=white ctermbg=black
-highlight CmdLine         cterm=none ctermfg=white ctermbg=black
+highlight CmdLine         cterm=none ctermfg=none ctermbg=default
 highlight ErrorMsg        cterm=none ctermfg=red ctermbg=black
 
 highlight Directory       cterm=none ctermfg=cyan ctermbg=default

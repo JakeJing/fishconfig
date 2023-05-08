@@ -1,0 +1,1 @@
+set -g -x PATH /usr/local/bin /opt/local/bin /Users/jakejing/.config/vifm/scripts/ /usr/local/share/ /usr/local/share/fish/completions/ /Applications/Julia-1.7.app/Contents/Resources/julia/bin/ $PATH

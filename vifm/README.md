@@ -5,6 +5,8 @@
 ```shell
 gg # first line
 shift + g # end line
+ctrl + D # go half-page Down
+ctrl + U # go half-page Up
 ```
 
 ### 2. toggle visibility of preview window
@@ -17,7 +19,7 @@ This command is quite useful when you want to copy/move files from another folde
 
 ```shell
 w # hide the preview window
-whitespace # switch between panels
+whitespace # switch between panels (useful)
 ```
 
 You can copy the file you want at the right panel and return to the left panel and paste there, since the clipboard is shared.
@@ -53,10 +55,12 @@ s # open shell at the current directory
 ctrl + d # return to vifm
 ```
 
-You can also directory run a command in vifm, e.g., open a file via vim:
+You can also directory run a command in vifm, e.g., open a file via neovim:
 
 ```bash
-:!vim file.txt
+:!nvim file.txt
+# Alternatively
+:!nvim %c # open the current file under the cursor
 ```
 
 ### 7. Sort files

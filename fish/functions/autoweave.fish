@@ -1,4 +1,4 @@
-function autoweave --description 'automatic compile a .pmd file into pdf'
+function autoweave --description 'automatic compile a .py and .pmd file into pdf'
   set filename $argv
   set rootname (echo $filename | sed 's/\.[^.]*$//')
 
@@ -43,33 +43,43 @@ function autoweave --description 'automatic compile a .pmd file into pdf'
 	#rm "$rootname".md "$rootname".tex "$rootname".aux "$rootname".lo* "$rootname".out "$rootname".toc headfile.out
     #open -a Preview "$rootname".pdf
   case '*.pmd'
-    set DT (date +"%d.%m.%Y")
-    sed 's/^```python,/# %% /' $filename | sed 's/^```/# %% /' | sed "s/^date.*/date: $DT/" > "$rootname".py
-    sed "s/^date.*/date: $DT/" $filename > "$rootname"-temp.pmd
-    pweave -f pandoc "$rootname"-temp.pmd
+    # set DT (date +"%d.%m.%Y")
+    # sed 's/^```python,/# %% /' $filename | sed 's/^```/# %% /' | sed "s/^date.*/date: $DT/" > "$rootname".py
+    # sed "s/^date.*/date: $DT/" $filename > "$rootname"-temp.pmd
+    pweave -f pandoc "$rootname".pmd
 	# It seems that Knit Rstudio can sometimes update the template (this is thge latest one via lua)
-	/usr/local/bin/pandoc +RTS -K512m -RTS "$rootname"-temp.md --to latex --from markdown+autolink_bare_uris+tex_math_single_backslash --output "$rootname"-temp.tex --self-contained --table-of-contents --toc-depth 4 --number-sections --highlight-style tango --pdf-engine xelatex --variable graphics --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua --variable=lof --variable=lot --bibliography=/Users/jakejing/switchdrive/bib/references.bib --csl=/Users/jakejing/switchdrive/bib/unified-style-linguistics.csl --variable 'geometry:margin=1in'
+	/usr/local/bin/pandoc +RTS -K512m -RTS "$rootname".md --to latex --from markdown+autolink_bare_uris+tex_math_single_backslash --output "$rootname".tex --self-contained --table-of-contents --toc-depth 2 --number-sections --highlight-style tango --variable graphics --wrap preserve --variable 'geometry:margin=1in' --variable tables=yes --standalone -Mhas-frontmatter=false
+	#/usr/local/bin/pandoc +RTS -K512m -RTS "$rootname"-temp.md --to latex --from markdown+autolink_bare_uris+tex_math_single_backslash --output "$rootname"-temp.tex --self-contained --table-of-contents --toc-depth 4 --number-sections --highlight-style tango --pdf-engine xelatex --variable graphics --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua --variable=lof --variable=lot --bibliography=/Users/jakejing/switchdrive/bib/references.bib --csl=/Users/jakejing/switchdrive/bib/unified-style-linguistics.csl --variable 'geometry:margin=1in'
     mv "$rootname"-temp.tex "$rootname".tex
     xelatex "$rootname".tex
     xelatex "$rootname".tex
     # need to compile 2 times to get the content page
     rm "$rootname".md "$rootname".tex "$rootname".aux "$rootname".lo* "$rootname".out "$rootname".toc "$rootname"-temp.pmd "$rootname"-temp.md "$rootname"-temp.tex
-    open -a Preview "$rootname".pdf
+    open -a skim "$rootname".pdf
 
-  #case '*.py'
-    #set DT (date +"%d.%m.%Y")
-    #sed 's/^# %% /```python,/' $filename | sed 's/^# %%$/```/' | sed "s/^date.*/date: $DT/" > "$rootname".pmd
+  case '*.py'
+    if test -d venv
+	  source venv/bin/activate.fish
+	end
 
-	#pweave -f pandoc "$rootname".pmd
+    set DT (date +"%d.%m.%Y")
+    sed  's/^# ~~ //' $filename | sed 's/^# %% /```python,/' | sed 's/^# %%$/```/' | sed "s/^date.*/date: $DT/" > "$rootname".pmd
+
+	pweave -f pandoc "$rootname".pmd
 
 	# insert the header to the 3r row
 	#  echo -e '4r /Users/jakejing/.config/fish/functions/header.md\nw' | ed "$rootname".md
-    	# It seems that Knit Rstudio can sometimes update the template (this is thge latest one via lua)
-	#/usr/local/bin/pandoc +RTS -K512m -RTS "$rootname".md --to latex --from markdown+autolink_bare_uris+tex_math_single_backslash --output "$rootname".tex --self-contained --table-of-contents --toc-depth 4 --number-sections --highlight-style tango --pdf-engine xelatex --variable graphics --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/3.6/Resources/library/rmarkdown/rmd/lua/latex-div.lua --variable=lof --variable=lot --bibliography=/Users/jakejing/switchdrive/bib/references.bib --csl=/Users/jakejing/switchdrive/bib/unified-style-linguistics.csl --variable 'geometry:margin=1in'
-    #xelatex "$rootname".tex
-    #xelatex "$rootname".tex
+    /usr/local/bin/pandoc +RTS -K512m -RTS "$rootname".md --to latex --from markdown+autolink_bare_uris+tex_math_single_backslash --output "$rootname".tex --self-contained --table-of-contents --toc-depth 4 --number-sections --highlight-style tango --variable graphics --wrap preserve --variable 'geometry:margin=1in' --variable tables=yes --standalone -Mhas-frontmatter=false
+
+	xelatex "$rootname".tex
+    xelatex "$rootname".tex
     # need to compile 2 times to get the content page
-    #rm "$rootname".md "$rootname".tex "$rootname".aux "$rootname".lo* "$rootname".out "$rootname".toc
-    #open -a Preview "$rootname".pdf
+    rm "$rootname".md "$rootname".tex "$rootname".aux "$rootname".lo* "$rootname".out "$rootname".toc
+    open -a skim "$rootname".pdf # repalce "Preview"
+
+	if test -d venv
+	  deactivate
+	end
+
   end
 end

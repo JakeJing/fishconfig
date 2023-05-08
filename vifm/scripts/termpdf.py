@@ -1,8 +1,8 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.8
+
+# it works best on python3.8, not working on python3.9 or 3.10
+
 # vim:fileencoding=utf-8
-
-# Note: python3.9 is not well-supported.
-
 """\
 Usage:
     termpdf.py [options] example.pdf
@@ -10,8 +10,10 @@ Usage:
 Options:
     -p n, --page-number n : open to page n
     -f n, --first-page n : set logical page number for page 1 to n
-    --citekey key : bibtex citekey
+    --citekey key : associate file with bibtex citekey
+    -o, --open citekey : open file associated with bibtex entry with citekey
     --nvim-listen-address path : path to nvim msgpack server
+    --ignore-cache : ignore saved settings for files
     -v, --version
     -h, --help
 """
@@ -57,7 +59,9 @@ import fcntl
 import fitz
 import os
 import sys
+import logging
 import termios
+import threading
 import subprocess
 import zlib
 import shutil
@@ -74,13 +78,14 @@ from collections import namedtuple
 from math import ceil
 from tempfile import NamedTemporaryFile
 
+
 # Class Definitions
 
 class Config:
     def __init__(self):
         self.BIBTEX = ''
-        self.KITTYCMD = 'kitty --single-instance --instance-group=1' # open notes in a new OS window
-        # self.KITTYCMD = 'kitty @ new-window' # open notes in split kitty window
+        #self.KITTYCMD = 'kitty --single-instance --instance-group=1' # open notes in a new OS window
+        self.KITTYCMD = 'kitty @ new-window' # open notes in split kitty window
         self.TINT_COLOR = 'antiquewhite2'
         self.URL_BROWSER_LIST = [
             'gnome-open',
@@ -106,7 +111,7 @@ class Config:
                     break
 
     def load_config_file(self):
-        config_file = os.path.join(os.getenv('HOME'), '.config', 'termpdf.py', 'config')
+        config_file = os.path.expanduser(os.path.join(os.getenv("XDG_CONFIG_HOME", "~/.config"), 'termpdf.py', 'config'))
         if os.path.exists(config_file):
             with open(config_file, 'r') as f:
                 prefs = json.load(f)
@@ -127,11 +132,7 @@ class Buffers:
         self.current = n
 
     def cycle(self, count):
-        l = len(self.docs) - 1
-        c = self.current + count
-        if c > l:
-            c = 0
-        self.current = c
+        self.current = (self.current + count) % len(self.docs)
 
     def close_buffer(self,n):
         del self.docs[n]
@@ -254,7 +255,7 @@ def get_filehash(path):
 
 def get_cachefile(path):
     filehash = get_filehash(path)
-    cachedir = os.path.join(os.getenv("HOME"), '.config', 'termpdf.py', 'cache')
+    cachedir = os.path.expanduser(os.path.join(os.getenv("XDG_CACHE_HOME", "~/.cache"), 'termpdf.py'))
     os.makedirs(cachedir, exist_ok=True)
     cachefile = os.path.join(cachedir, filehash)
     return cachefile
@@ -272,7 +273,7 @@ class Document(fitz.Document):
         self.page = 0
         self.logicalpage = 1
         self.prevpage = 0
-        self.pages = self.pageCount - 1
+        self.pages = self.page_count - 1
         self.first_page_offset = 1
         self.logical_pages = list(range(0 + self.first_page_offset, self.pages + self.first_page_offset))
         self.chapter = 0
@@ -281,6 +282,8 @@ class Document(fitz.Document):
         self.width = width
         self.height = height
         self.autocrop = False
+        self.manualcrop = False
+        self.manualcroprect = [None,None]
         self.alpha = False
         self.invert = False
         self.tint = False
@@ -299,6 +302,8 @@ class Document(fitz.Document):
                  'chapter': self.chapter,
                  'rotation': self.rotation,
                  'autocrop': self.autocrop,
+                 'manualcrop': self.manualcrop,
+                 'manualcroprect': self.manualcroprect,
                  'alpha': self.alpha,
                  'invert': self.invert,
                  'tint': self.tint}
@@ -357,7 +362,7 @@ class Document(fitz.Document):
         self.goto_chap(self.chapter - count)
 
     def parse_pagelabels(self):
-        if self.isPDF:
+        if self.is_pdf:
             from pdfrw import PdfReader
             from pagelabels import PageLabels, PageLabelScheme
             try:
@@ -371,7 +376,7 @@ class Document(fitz.Document):
         return labels
 
     def set_pagelabel(self,count,style="arabic"):
-        if self.isPDF:
+        if self.is_pdf:
             from pdfrw import PdfReader, PdfWriter
             from pagelabels import PageLabels, PageLabelScheme
             reader = PdfReader(self.filename)
@@ -390,7 +395,7 @@ class Document(fitz.Document):
 
             writer = PdfWriter()
             writer.trailer = reader
-            #print("writing new pagelabels...")
+            logging.debug("writing new pagelabels...")
             writer.write(self.filename)
 
     # unused; using pdfrw instead
@@ -404,7 +409,7 @@ class Document(fitz.Document):
             match = re.search('/PageLabels',line)
             if re.match(r'.*/PageLabels.*', line):
                 labels += [line]
-        print(labels)
+        logging.debug(labels)
         raise SystemExit
 
     def pages_to_logical_pages(self):
@@ -503,7 +508,7 @@ class Document(fitz.Document):
             papersize = 0
         p = sizes[papersize]
         self.layout(fitz.paper_rect(p))
-        self.pages = self.pageCount - 1
+        self.pages = self.page_count - 1
         if adjustpage:
             target = int((self.pages + 1) * pct) - 1
             target = self.find_target(target, target_text)
@@ -549,7 +554,7 @@ class Document(fitz.Document):
         from operator import itemgetter
         from itertools import groupby
         page = self.load_page(self.page)
-        words = page.getTextWords()
+        words = page.get_text_words()
         mywords = [w for w in words if fitz.Rect(w[:4]) in rect]
         mywords.sort(key=itemgetter(3, 0))  # sort by y1, x0 of the word rect
         group = groupby(mywords, key=itemgetter(3))
@@ -563,7 +568,7 @@ class Document(fitz.Document):
         from operator import itemgetter
         from itertools import groupby
         page = self.load_page(self.page)
-        words = page.getTextWords()
+        words = page.get_text_words()
         mywords = [w for w in words if fitz.Rect(w[:4]).intersects(rect)]
         mywords.sort(key=itemgetter(3, 0))  # sort by y1, x0 of the word rect
         group = groupby(mywords, key=itemgetter(3))
@@ -574,14 +579,14 @@ class Document(fitz.Document):
 
     def search_text(self,string):
         for p in range(self.page,self.pages):
-            page_text = self.getPageText(p, 'text')
+            page_text = self.get_page_text(p, 'text')
             if re.search(string,page_text):
                 self.goto_page(p)
                 return "match on page"
         return "no matches"
 
     def auto_crop(self,page):
-        blocks = page.getTextBlocks()
+        blocks = page.get_text_blocks()
 
         if len(blocks) > 0:
             crop = fitz.Rect(blocks[0][:4])
@@ -599,13 +604,16 @@ class Document(fitz.Document):
         page = self.load_page(p)
         page_state = self.page_states[p]
 
-        if self.autocrop and self.isPDF:
-            page.set_cropbox(page.MediaBox)
+        if self.manualcrop and self.manualcroprect != [None,None] and self.is_pdf:
+            page.set_cropbox(fitz.Rect(self.manualcroprect[0],self.manualcroprect[1]))
+
+        elif self.autocrop and self.is_pdf:
+            page.set_cropbox(page.mediabox)
             crop = self.auto_crop(page)
             page.set_cropbox(crop)
 
-        elif self.isPDF:
-            page.set_cropbox(page.MediaBox)
+        elif self.is_pdf:
+            page.set_cropbox(page.mediabox)
 
         dw = scr.width
         dh = scr.height - scr.cell_height
@@ -650,14 +658,15 @@ class Document(fitz.Document):
             pix = page.get_pixmap(matrix = mat, alpha=self.alpha)
 
             if self.invert:
-                pix.invertIRect()
+                pix.invert_irect()
 
             if self.tint:
                 tint = fitz.utils.getColor(self.tint_color)
                 red = int(tint[0] * 256)
                 blue = int(tint[1] * 256)
                 green = int(tint[2] * 256)
-                pix.tintWith(red,blue,green)
+                # pix.tint_with(red, blue, green)
+                # tinting disabled due to unresolved bug
 
             # build cmd to send to kitty
             cmd = {'i': p + 1, 't': 'd', 's': pix.width, 'v': pix.height}
@@ -777,7 +786,7 @@ class Document(fitz.Document):
         if 'Keywords' in bib_entry.fields:
             metadata['keywords'] = bib_entry.fields['Keywords']
 
-        self.setMetadata(metadata)
+        self.set_metadata(metadata)
         try:
             self.saveIncr()
         except:
@@ -872,7 +881,7 @@ class Document(fitz.Document):
 
     def show_links(self, bar):
 
-        links = self[self.page].getLinks()
+        links = self[self.page].get_links()
 
         urls = [link for link in links if 0 < link['kind'] < 3]
 
@@ -1022,41 +1031,41 @@ class status_bar:
 class shortcuts:
 
     def __init__(self):
-        self.GOTO_PAGE        = {ord('G')}
-        self.GOTO             = {ord('g')}
-        self.NEXT_PAGE        = {ord('j'), curses.KEY_DOWN, ord(' ')}
-        self.PREV_PAGE        = {ord('k'), curses.KEY_UP}
-        self.GO_BACK          = {ord('p')}
-        self.NEXT_CHAP        = {ord('l'), curses.KEY_RIGHT}
-        self.PREV_CHAP        = {ord('h'), curses.KEY_LEFT}
-        self.BUFFER_CYCLE     = {ord('b')}
-        self.BUFFER_CYCLE_REV = {ord('B')}
-        self.HINTS            = {ord('f')}
-        self.OPEN             = {curses.KEY_ENTER, curses.KEY_RIGHT, 10}
-        self.SHOW_TOC         = {ord('t')}
-        self.SHOW_META        = {ord('M')}
-        self.UPDATE_FROM_BIB  = {ord('b')}
-        self.SHOW_LINKS       = {ord('f')}
-        self.TOGGLE_TEXT_MODE = {ord('T')}
-        self.ROTATE_CW        = {ord('r')}
-        self.ROTATE_CCW       = {ord('R')}
-        self.VISUAL_MODE      = {ord('s')}
-        self.SELECT           = {ord('v')}
-        self.YANK             = {ord('y')}
-        self.INSERT_NOTE      = {ord('n')}
-        self.APPEND_NOTE      = {ord('a')}
-        self.TOGGLE_AUTOCROP  = {ord('c')}
-        self.TOGGLE_ALPHA     = {ord('A')}
-        self.TOGGLE_INVERT    = {ord('i')}
-        self.TOGGLE_TINT      = {ord('d')}
-        self.SET_PAGE_LABEL   = {ord('P')}
-        self.SET_PAGE_ALT     = {ord('I')}
-        self.INC_FONT         = {ord('=')}
-        self.DEC_FONT         = {ord('-')}
-        self.OPEN_GUI         = {ord('X')}
-        self.REFRESH          = {18, curses.KEY_RESIZE}            # CTRL-R
-        self.QUIT             = {3, ord('q')}
-        self.DEBUG            = {ord('D')}
+        self.GOTO_PAGE        = [ord('G')]
+        self.GOTO             = [ord('g')]
+        self.NEXT_PAGE        = [ord('j'), curses.KEY_DOWN, ord(' ')]
+        self.PREV_PAGE        = [ord('k'), curses.KEY_UP]
+        self.GO_BACK          = [ord('p')]
+        self.NEXT_CHAP        = [ord('l'), curses.KEY_RIGHT]
+        self.PREV_CHAP        = [ord('h'), curses.KEY_LEFT]
+        self.BUFFER_CYCLE     = [ord('b')]
+        self.BUFFER_CYCLE_REV = [ord('B')]
+        self.HINTS            = [ord('f')]
+        self.OPEN             = [curses.KEY_ENTER, curses.KEY_RIGHT, 10]
+        self.SHOW_TOC         = [ord('t')]
+        self.SHOW_META        = [ord('M')]
+        self.UPDATE_FROM_BIB  = [ord('b')]
+        self.SHOW_LINKS       = [ord('f')]
+        self.TOGGLE_TEXT_MODE = [ord('T')]
+        self.ROTATE_CW        = [ord('r')]
+        self.ROTATE_CCW       = [ord('R')]
+        self.VISUAL_MODE      = [ord('s')]
+        self.SELECT           = [ord('v')]
+        self.YANK             = [ord('y')]
+        self.INSERT_NOTE      = [ord('n')]
+        self.APPEND_NOTE      = [ord('a')]
+        self.TOGGLE_AUTOCROP  = [ord('c')]
+        self.TOGGLE_ALPHA     = [ord('A')]
+        self.TOGGLE_INVERT    = [ord('i')]
+        self.TOGGLE_TINT      = [ord('d')]
+        self.SET_PAGE_LABEL   = [ord('P')]
+        self.SET_PAGE_ALT     = [ord('I')]
+        self.INC_FONT         = [ord('=')]
+        self.DEC_FONT         = [ord('-')]
+        self.OPEN_GUI         = [ord('X')]
+        self.REFRESH          = [18, curses.KEY_RESIZE]            # CTRL-R
+        self.QUIT             = [3, ord('q')]
+        self.DEBUG            = [ord('D')]
 
 # Kitty graphics functions
 
@@ -1181,7 +1190,7 @@ def print_help():
 
 def parse_args(args):
     files = []
-    opts = {}
+    opts = {'ignore_cache': False}
     if len(args) == 1:
         args = args + ['-h']
 
@@ -1239,6 +1248,8 @@ def parse_args(args):
             else:
                 raise SystemExit('No file for ' + citekey)
             skip = True
+        elif arg in {'--ignore-cache'}:
+            opts['ignore_cache'] = True
         elif os.path.isfile(arg):
             files = files + [arg]
         elif os.path.isfile(arg.strip('\"')):
@@ -1255,8 +1266,9 @@ def parse_args(args):
 
     return files, opts
 
-
 def clean_exit(message=''):
+
+    scr.create_text_win(1, ' ')
 
     for doc in bufs.docs:
         # save current state
@@ -1282,6 +1294,14 @@ def get_text_in_rows(doc,left,right, selection):
     link = doc.make_link()
     select_text = select_text + [link]
     return (' '.join(select_text))
+
+def crop_to_selection(doc,left,right,selection):
+    l,t,r,b = doc.page_states[doc.page].place
+    top = (l + left,t + selection[0] - 1)
+    bottom = (l + right,t + selection[1])
+    top_pix, bottom_pix = doc.cells_to_pixels(top,bottom)
+    doc.manualcrop = True
+    doc.manualcroprect = [top_pix, bottom_pix]
 
 # Viewer functions
 
@@ -1457,7 +1477,23 @@ def visual_mode(doc,bar):
             unhighlight_selection([t,b])
             return
 
-def view(doc):
+        elif key in keys.TOGGLE_AUTOCROP and selection != [None,None]:
+            crop_to_selection(doc,left,right,selection)
+            unhighlight_selection([t,b])
+            doc.mark_all_pages_stale()
+            return
+
+def watch_for_file_change(file_change,path):
+    timestamp = os.path.getmtime(path)
+    while True:
+        sleep(.5)
+        nts = os.path.getmtime(path)
+        if nts != timestamp:
+            timestamp = nts
+            logging.debug('file changed')
+            file_change.set()
+
+def view(file_change,doc):
 
     scr.get_size()
     scr.init_curses()
@@ -1487,7 +1523,16 @@ def view(doc):
         else:
             count = int(count_string)
 
+        scr.stdscr.nodelay(True)
         key = scr.stdscr.getch()
+        while key == -1 and not file_change.is_set():
+            key = scr.stdscr.getch()
+        scr.stdscr.nodelay(False)
+
+        if file_change.is_set():
+            logging.debug('view thread sees that file has changed')
+            key = keys.REFRESH[0]
+            file_change.clear()
 
         if key == -1:
             pass
@@ -1496,8 +1541,21 @@ def view(doc):
             scr.clear()
             scr.get_size()
             scr.init_curses()
-            doc.set_layout(doc.papersize)
-            doc.mark_all_pages_stale()
+            current_doc = bufs.docs[bufs.current]
+            current_doc.write_state()
+            doc = Document(current_doc.filename)
+            cachefile = get_cachefile(doc.filename)
+            if os.path.exists(cachefile):
+                with open(cachefile, 'r') as f:
+                    state = json.load(f)
+                for key in state:
+                    setattr(doc, key, state[key])
+            bufs.docs[bufs.current] = doc
+            if not doc.citekey:
+                doc.citekey = citekey_from_path(doc.filename)
+            doc.pages_to_logical_pages()
+            doc.goto_logical_page(doc.logicalpage)
+            doc.set_layout(doc.papersize,adjustpage=False)
 
         elif key == 27:
             # quash stray escape codes
@@ -1608,7 +1666,19 @@ def view(doc):
             stack = [0]
 
         elif key in keys.TOGGLE_AUTOCROP:
-            doc.autocrop = not doc.autocrop
+            # cycle through no crop, autocrop, and manualcrop
+            if doc.manualcroprect != [None,None]:
+                if doc.autocrop:
+                    doc.autocrop = False
+                    doc.manualcrop = True
+                elif doc.manualcrop:
+                    doc.autocrop = False
+                    doc.manualcrop = False
+                else:
+                    doc.autocrop = True
+            # just toggle autocrop
+            else:
+                doc.autocrop = not doc.autocrop
             doc.mark_all_pages_stale()
             count_string = ""
             stack = [0]
@@ -1681,7 +1751,7 @@ def view(doc):
             stack = [0]
 
         elif key in keys.SET_PAGE_LABEL:
-            if doc.isPDF:
+            if doc.is_pdf:
                 doc.set_pagelabel(count,'arabic')
             else:
                 doc.first_page_offset = count - doc.page
@@ -1690,7 +1760,7 @@ def view(doc):
             stack = [0]
 
         elif key in keys.SET_PAGE_ALT:
-            if doc.isPDF:
+            if doc.is_pdf:
                 doc.set_pagelabel(count,'roman lowercase')
             else:
                 doc.first_page_offset = count - doc.page
@@ -1738,6 +1808,9 @@ def main(args=sys.argv):
             'Terminal does not support reporting screen sizes via the TIOCGWINSZ ioctl'
         )
 
+    if scr.width == 65535:
+        raise SystemExit('Screen size is not being reported properly.\nThis problem might be caused by the fish shell.')
+
     paths, opts = parse_args(args)
 
     for path in paths:
@@ -1748,7 +1821,7 @@ def main(args=sys.argv):
 
         # load saved file state
         cachefile = get_cachefile(doc.filename)
-        if os.path.exists(cachefile):
+        if os.path.exists(cachefile) and not opts['ignore_cache']:
             with open(cachefile, 'r') as f:
                 state = json.load(f)
             for key in state:
@@ -1774,8 +1847,17 @@ def main(args=sys.argv):
     # apply layout settings
     doc.set_layout(doc.papersize,adjustpage=False)
 
-    view(doc)
+    # set up thread to watch for file changes
+    file_change = threading.Event()
+    file_watch = threading.Thread(target=watch_for_file_change, args=(file_change, doc.filename))
+    file_watch.daemon = True
+    file_watch.start()
+
+    doc_viewer = threading.Thread(target=view, args=(file_change, doc))
+    doc_viewer.start()
 
 if __name__ == '__main__':
+    #logging.basicConfig(filename='termpdf.log',level=logging.DEBUG)
+    #logging.basicConfig(filename='termpdf.log',level=logging.WARNING)
     main()
 
