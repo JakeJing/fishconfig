@@ -1,0 +1,1 @@
+../../../dotfiles/.config/fish/functions/lf-pick.fish

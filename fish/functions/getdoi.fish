@@ -1,4 +1,1 @@
-function getdoi --description "get doi from a pdf"
-  pdftotext "$argv" - | grep -i "doi"
-
-end
+../../../dotfiles/.config/fish/functions/getdoi.fish
