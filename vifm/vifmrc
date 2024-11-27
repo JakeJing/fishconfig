@@ -13,10 +13,22 @@
 
 " set statusline="%t %20s %6E %6E= %-30d %a"
 " set format of file modification time
+" set viewcolumns=-80%{name},10%{ext},{mtime}
+" set viewcolumns=-80%{name},10%{ext}
+" set lsview
+" set lsoptions=transposed
+" set number
+" set relativenumber "relative line number
+
+" set viewcolumns=-80%{name}
+" set dotfiles
+" set sort=+dir,+iname,-mode
+set showtabline=always
+" set tabscope=pane
 
 " highlight statusline ctermbg=green ctermfg=blue cterm=none
 set timefmt='%b %d, %Y @ %H:%M'
-set statusline=" %A %10u:%-7g %6E 👉 %-20d %a"
+" set statusline=" %A %10u:%-7g %6E 👉 %-20d %a"
 
 " Don't highlight search results automatically
 set nohlsearch
@@ -24,10 +36,8 @@ set nohlsearch
 " Use increment searching (search while typing)
 set incsearch
 
-
 " hide the dot file by default, ! ensures that none of user-defined mappings will affect execution of Normal mode cmd
 windo normal! zm
-
 
 " ------------------------------------------------------------------------------
 
@@ -163,9 +173,11 @@ command! reload :write | restart
 
 " define a fish func ViewVimTerm.fish that check file types and open it either with vim or termpdf
 command! v !! ViewVimTerm %f
+command! hx !! hx %f
+" command! t !! timg --title --center %f
 command! p !! pvd %f
 command! o open $PWD
-
+command! vd !! vd
 
 "------------------------------------------------------------------------------
 " fileview
@@ -219,12 +231,19 @@ filetype *.ps,*.eps,*.ps.gz
 filetype *.vim nvim %f
 
 " .md file open with typora and view with mdcat "brew install mdcat"
-filetype *.md open -a typora %f
+" filetype *.md open -a typora %f
+filetype *.md hx %f
 fileviewer *.md mdcat %f
 "fileviewer *.md bat %f
 
+
+filetype *.toml hx %f
+filetype *.txt hx %f
+" filetype *.sh hx %f
+" filetype *.py hx %f
+
 " .Rmd file open with code, no space between file types
-filetype *.Rmd,*pmd,*.jmd code %f
+" filetype *.Rmd,*pmd*.jmd code %f
 " fileviewer *.Rmd,*.rmd mdcat %f
 
 " .jl file open with code
@@ -235,7 +254,8 @@ filetype *.js,*.css *.ts code %f
 
 
 " .csv file open with scim
-filetype *.csv sc-im %f
+" filetype *.csv sc-im %f
+filetype *.csv,*.xlsx,*.xls vd %f
 
 " .bib file open with Bibdesk
 filetype *.bib /Applications/TeX/BibDesk.app/Contents/MacOS/BibDesk %f
@@ -248,23 +268,25 @@ fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.xpm
     \ %pc
     \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear %N
 
+" fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
+"         \ chafa -s %pwx%ph %f %pd
+"         \ %pc
+"         \ chafa --size=%pwx%ph %f %pd --clear
+
+        " \ chafa -f kitty -s %pwx%ph %c %pd %N 2>/dev/null
+"" \ chafa --size=%pwx%ph %c %pd %N
+        " \ chafa -c full -s %pw %c %pd
+
+" fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
+"         \ timg -g %pwx%ph --title --center %c
+
 " Pdf
-" Note: > /dev/null is used to avoid print out stdout info
-" filetype *.pdf open -a Preview %f &
-filetype *.pdf open -a Skim %f &
-fileviewer *.pdf
-        \ tput cup %py %px > /dev/tty && vips copy %c[dpi=300] /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg %N
-		\ %pc
-		\ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear %N
-
-" old method with sips or convert:
-" \ tput cup %py %px > /dev/tty && sips -s format jpeg %c --out /tmp/tempfile.jpg > /dev/null&& kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg %N
-" \ tput cup %py %px > /dev/tty && convert -density 300 -quality 100 %c[0] /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg %N
-
-
-
-" pdftoppm -jpeg -f 1 -singlefile %c /tmp/tempfile
-
+filetype *.pdf open -a Skim %c &
+fileviewer *.pdf 
+    \ pdftoppm -f 1 -l 1 -singlefile %c | 
+    \ kitty +kitten icat --transfer-mode=stream --place=%pwx%ph@%pxx%py %N
+    \ %pc
+    \ kitty +kitten icat --transfer-mode=stream --place=%pwx%ph@%pxx%py --clear %N
 
 " Video
 filetype *.gif,*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
@@ -277,10 +299,13 @@ filetype *.gif,*.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,
        \ {Open in MPlayerX}
        \ open -a MPlayerX.app,
 fileviewer *.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,*.fl[icv],*.m2v,*.mov,*.webm,*.mts,*.m4v,*.r[am],*.qt,*.divx,*.as[fx]
-		   \ tput cup %py %px > /dev/tty && ffmpeg -y -hide_banner -loglevel panic -i %c -ss 00:00:01.000 -vframes 1 /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg %N
-		  \ %pc
-		  \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear %N
-" alternative setting to fix the frame time: -ss 00:00:03.000 -vframes 1
+        \ timg -g %pwx%ph --title --center %c %N
+        \ %pc
+        \ timg -g %pwx%ph --title --center --clear %c %N
+" fileviewer *.avi,*.mp4,*.wmv,*.dat,*.3gp,*.ogv,*.mkv,*.mpg,*.mpeg,*.vob,*.fl[icv],*.m2v,*.mov,*.webm,*.mts,*.m4v,*.r[am],*.qt,*.divx,*.as[fx]
+" 		   \ tput cup %py %px > /dev/tty && ffmpeg -y -hide_banner -loglevel panic -i %c -ss 00:00:01.000 -vframes 1 /tmp/tempfile.jpg > /dev/null && kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py /tmp/tempfile.jpg %N
+" 		  \ %pc
+" 		  \ kitty +kitten icat --transfer-mode=file --place=%pwx%ph@%pxx%py --clear %N
 
 " Web
 filetype *.html,*.htm
@@ -348,7 +373,9 @@ filetype *.img open
 filetype *.pkg open
 
 " Office files
-filetype *.odt,*.doc,*.docx,*.xls,*.xlsx,*.odp,*.pptx,*.ppt open -a LibreOffice.app
+" This is a useful way to pass variable names (change libreoffice to soffice if want to enable the preview)
+fileviewer *.odt,*.doc,*.docx,*.ods,*.xls,*.xlsx libreoffice --convert-to html --outdir /tmp/ %c &>/dev/null && w3m /tmp/%c:r.html
+filetype *.odt,*.doc,*.docx,*.odp,*.pptx,*.ppt open -a LibreOffice.app
 " fileviewer *.doc catdoc -
 " fileviewer *.docx, *.doc docx2txt.pl %c -
 fileviewer {*.doc},<application/msword> antiword -
@@ -408,10 +435,12 @@ mark g /Users/jakejing/GoogleDrive
 mark t /Users/jakejing/.config/vifm/Trash/
 "mark o /Users/jakejing/switchdrive/ICHL-UraTyp/Main
 mark r /Users/jakejing/switchdrive/rwd
-mark l /Users/jakejing/switchdrive/DLM-distribution/Main
+mark l /Users/jakejing/GoogleDrive/DLM-evolution/Manuscript
 mark p /Users/jakejing/switchdrive/pywd
 mark y /Users/jakejing/switchdrive/rwd/phylogenetic-tools
 mark n /Users/jakejing/.config/nvim/lua/yq
+mark n /Users/jakejing/.config/nvim/lua/yq
+mark S ~/switchdrive/DLM-distribution/related-methods/huber-2023-Surprisal-llm/surprisal
 " ------------------------------------------------------------------------------
 
 " Examples of configuring both panels
@@ -427,6 +456,13 @@ mark n /Users/jakejing/.config/nvim/lua/yq
 " ------------------------------------------------------------------------------
 
 " Sample mappings
+
+nnoremap . za
+" nnoremap <space> t
+" nnoremap <space>t :tabnew<cr>
+" nnoremap <space>j :tabprevious<cr>
+" nnoremap <space>k :tabnext<cr>
+" nnoremap <space>x :tabclose<cr>
 
 " mapping to create new blank file
 nnoremap to :touch<space>
@@ -451,13 +487,13 @@ nnoremap w :view<cr>
 vnoremap w :view<cr>gv
 
 " Open file in new MacVim tab
-nnoremap o :!mvim --remote-tab-silent %f<cr>
+nnoremap o :!nvim %f<cr>
+nnoremap x :!hx %f<cr>
 " Open file in new MacVim window
-nnoremap O :!mvim %f<cr>
+" nnoremap O :!nvim %f<cr>
 
 " Open file in the background using its default program
 nnoremap gb :!open -g %f<cr>
-
 
 " Yank current directory path into the clipboard
 nnoremap yd :!printf %d | pbcopy<cr>
@@ -471,7 +507,6 @@ nnoremap yn :!echo -n %c | pbcopy %i<cr>
 " yank root of current file's name into the clipboard
 nnoremap yr :!echo -n %c:r | pbcopy %i<cr>
 
-
 " View preview in Quick Look
 nnoremap q :!qlmanage -p %f > /dev/null 2>&1<cr>
 " Unhide builtin q* keymaps
@@ -484,17 +519,17 @@ nnoremap q= q=
 nnoremap I cw<c-a>
 nnoremap cc cw<c-u>
 " rename with extension
-nnoremap A cw
+nnoremap A cW
 " rename withou extension
-nnoremap a cW
+nnoremap a cw
 
-
-
+" remap g to '
+" nnoremap g '
 
 " Open editor to edit vifmrc and apply settings after returning to vifm
 nnoremap ,c :write | edit $MYVIFMRC | restart<cr>
 " Open MacVim to edit vifmrc
-nnoremap ,C :!mvim --remote-tab-silent $MYVIFMRC &<cr>
+" nnoremap ,C :!mvim --remote-tab-silent $MYVIFMRC &<cr>
 
 " Toggle wrap setting on ,w key
 nnoremap ,w :set wrap!<cr>
