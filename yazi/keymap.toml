@@ -145,7 +145,7 @@ desc  = "Test plugin"
 # on  = [ "'", "l"]
 # run = 'plugin custom-shell -- custom zsh "lazygit"'
 [[mgr.prepend_keymap]]
-on  = [ "v" ]
+on  = [ ":", "v" ]
 run = '''
 shell 'termpdf.py "$@"' --block --confirm
 '''
